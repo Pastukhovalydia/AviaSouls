@@ -1,11 +1,12 @@
 package ru.netology;
 
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.netology.manager.TicketTimeComparator;
+import ru.netology.manager.AviaSouls;
 
-
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class AviaSoulsTest {
     private AviaSouls aviaSouls;
@@ -18,23 +19,53 @@ public class AviaSoulsTest {
         aviaSouls.add(new Ticket("Moscow", "Berlin", 150, 14, 16));
     }
 
+
+    //при поиске билетов существующего маршрута возвращается массив с соответствующими билетами
     @Test
     public void testSearch_ExistingTickets_ReturnsMatchingTickets() {
         Ticket[] result = aviaSouls.search("Moscow", "Berlin");
 
-        Assertions.assertEquals(1, result.length);
-        Assertions.assertEquals("Moscow", result[0].getFrom());
-        Assertions.assertEquals("Berlin", result[0].getTo());
-        Assertions.assertEquals(150, result[0].getPrice());
-        Assertions.assertEquals(14, result[0].getTimeFrom());
-        Assertions.assertEquals(16, result[0].getTimeTo());
+        Ticket[] expected = {new Ticket("Moscow", "Berlin", 150, 14, 16)};
+        Assertions.assertArrayEquals(expected, result);
     }
 
+    //при поиске билетов для несуществующего маршрута возвращается пустой массив
     @Test
     public void testSearch_NonExistingTickets_ReturnsEmptyArray() {
         Ticket[] result = aviaSouls.search("London", "Paris");
 
-        Assertions.assertEquals(0, result.length);
+        Ticket[] expected = {};
+        Assertions.assertArrayEquals(expected, result);
+    }
+
+    //при поиске ровно одного билета возвращается массив, содержащий только этот билет.
+    @Test
+    public void testSearch_OneMatchingTicket_ReturnsArrayWithOneTicket() {
+        Ticket[] result = aviaSouls.search("Moscow", "Paris");
+
+        Ticket[] expected = {new Ticket("Moscow", "Paris", 100, 10, 12)};
+        Assertions.assertArrayEquals(expected, result);
+    }
+
+
+    @Test
+    public void testSearchAndSortBy_NonExistingTickets_ReturnsEmptyArray() {
+        TicketTimeComparator comparator = new TicketTimeComparator();
+
+        Ticket[] result = aviaSouls.searchAndSortBy("London", "Paris", comparator);
+
+        Ticket[] expected = {};
+        Assertions.assertArrayEquals(expected, result);
+    }
+
+    @Test
+    public void testSearchAndSortBy_ExistingTicket_ReturnsSortedTicket() {
+        TicketTimeComparator comparator = new TicketTimeComparator();
+
+        Ticket[] result = aviaSouls.searchAndSortBy("Moscow", "Paris", comparator);
+
+        Ticket[] expected = {new Ticket("Moscow", "Paris", 100, 10, 12)};
+        Assertions.assertArrayEquals(expected, result);
     }
 
     @Test
@@ -99,15 +130,6 @@ public class AviaSoulsTest {
         int result = comparator.compare(ticket1, ticket2);
 
         Assertions.assertFalse(result > 0);
-    }
-
-    @Test
-    public void testSearchAndSortBy_NonExistingTickets_ReturnsEmptyArray() {
-        TicketTimeComparator comparator = new TicketTimeComparator();
-
-        Ticket[] result = aviaSouls.searchAndSortBy("London", "Paris", comparator);
-
-        Assertions.assertEquals(0, result.length);
     }
 
 }

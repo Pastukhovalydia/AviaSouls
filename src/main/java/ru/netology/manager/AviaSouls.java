@@ -1,4 +1,4 @@
-package ru.netology;
+package ru.netology.manager;
 
 import ru.netology.Ticket;
 import java.util.Arrays;

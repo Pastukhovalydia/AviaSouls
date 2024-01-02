@@ -1,4 +1,4 @@
-package ru.netology.manager;
+package ru.netology;
 
 import ru.netology.Ticket;
 
